@@ -612,5 +612,12 @@ hr {
 <li>Перевірте меню <strong>DVCC</strong>: параметр <strong>Limit managed battery charge voltage</strong> повинен бути увімкнений та встановлений на <strong>52.4 В</strong> або <strong>52.5 В</strong>.</li>
 <li>Перевірте, чи не увімкнений випадково параметр SVS (Shared Voltage Sense) — він має бути <strong>OFF</strong>.</li>
 </ul>
+<hr/>
+<h2 id="10-platformio">10. Розробка, збірка та модифікація (PlatformIO)</h2>
+<p>Проект відкритий для модифікації та побудований з використанням екосистеми <strong>PlatformIO</strong> у VS Code:
+* <strong>Середовище:</strong> VS Code + розширення PlatformIO або утиліта командного рядка <code>pio</code>.
+* <strong>Основний вихідний код:</strong> <a href="src/main.cpp"><code>src/main.cpp</code></a>. Всі ключові параметри (напруги, порогові значення струму, таймінги Modbus, структура CAN-пакетів) чітко структуровані у вигляді <code>#define</code> констант на початку файлу.
+* <strong>Збірка:</strong> Виконується командою <code>pio run</code>. Результат автоматично генерується у <code>.pio/build/genericGD32F305/firmware.bin</code> та копіюється в папку <code>compiled_firmware/</code>.
+* <strong>Прошивка:</strong> Через інтерфейс SWD (ST-Link V2) за допомогою команди <code>pio run -t upload</code> або утиліти STM32CubeProgrammer / OpenOCD (початкова адреса <code>0x08000000</code>).</p>
 </body>
 </html>

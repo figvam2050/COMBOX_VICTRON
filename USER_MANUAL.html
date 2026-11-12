@@ -284,12 +284,16 @@ hr {
 <p><em>(Додатково на платі: </em><em>LED1 (PC13)</em><em> блимає з частотою 1 Гц, коли активна сесія вирівнювання/балансування; </em><em>LED2</em><em> світиться постійно — живлення 3.3 В).</em></p>
 <hr/>
 <h2 id="3">3. Схеми кабелів підключення</h2>
+<p><img alt="Загальна архітектура підключення системи" src="docs/images/system_wiring_overview.png"/></p>
 <blockquote>
 <p>⚠️ <strong>КРИТИЧНЕ ПОПЕРЕДЖЕННЯ З БЕЗПЕКИ:</strong><br/>
 <strong>НІКОЛИ НЕ ВИКОРИСТОВУЙТЕ ЗВИЧАЙНИЙ ПРЯМИЙ ПАТЧ-КОРД ДЛЯ З'ЄДНАННЯ З CERBO GX!</strong><br/>
 У гнізді COM-Box <code>PCS-CAN</code> лінія CAN-H розведена на Pin 8, а у Victron Cerbo GX на Pin 8 знаходиться лінія CAN-L. Якщо вставити прямий кабель, диференційні лінії CAN-H та CAN-L замкнуться між собою, зв'язок не запуститься, а трансивер може вийти з ладу!</p>
 </blockquote>
-<div class="diagram-card"><h3 id="31-can-com-box-victron-cerbo-gx">3.1. Спеціальний кабель CAN: COM-Box ➔ Victron Cerbo GX</h3><p>Для підключення виготовляється або обтискається трижильний крос-кабель крученої пари (UTP Cat5e/Cat6):</p><pre><code>Сторона COM-Box (Порт PCS-CAN)          Сторона Victron Cerbo GX (Порт BMS-Can)
+<h3 id="31-can-com-box-victron-cerbo-gx">3.1. Спеціальний кабель CAN: COM-Box ➔ Victron Cerbo GX</h3>
+<p><img alt="Розпіновка порту Cerbo GX BMS-Can" src="docs/images/cerbo_gx_can_pinout.png"/></p>
+<p>Для підключення виготовляється або обтискається трижильний крос-кабель крученої пари (UTP Cat5e/Cat6):</p>
+<pre><code>Сторона COM-Box (Порт PCS-CAN)          Сторона Victron Cerbo GX (Порт BMS-Can)
 ┌──────────────────────────────┐        ┌──────────────────────────────────────┐
 │ Pin 8 (CAN-H) ───────────────┼────────┼──► Pin 7 (CAN-H)                     │
 │ Pin 7 (CAN-L) ───────────────┼────────┼──► Pin 8 (CAN-L)                     │
@@ -297,9 +301,25 @@ hr {
 │                              │        │                                      │
 │ Піни 2, 3, 4, 5, 6 НЕ ПІДКЛ. │        │ Піни 1, 2, 4, 5, 6 НЕ ПІДКЛЮЧАТИ!   │
 └──────────────────────────────┘        └──────────────────────────────────────┘
-</code></pre></div>
-
-
+</code></pre>
+<div class="table-card"><table>
+<thead>
+<tr>
+<th style="text-align: center;">Роз'єм PCS-CAN на коробці COM-Box</th>
+<th style="text-align: center;">Штекер кабелю <code>(P8.7)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="COM-Box PCS-CAN" src="docs/images/combox_connected_can_cable.jpg"/></td>
+<td style="text-align: center;"><img alt="Роз'єм P8.7" src="docs/images/cable_combox_p87.jpg"/></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>Порт <code>PCS-CAN</code> (Pin 8=CAN-H, Pin 7=CAN-L)</strong></td>
+<td style="text-align: center;"><strong>Розшито піни 8 та 7 з боку коробки</strong></td>
+</tr>
+</tbody>
+</table></div>
 <blockquote>
 <p><strong>Обов'язковий термінатор 120 Ом:</strong><br/>
 Шина CAN вимагає узгодження на обох кінцях лінії.<br/>
@@ -320,6 +340,45 @@ hr {
 │ Піни 2, 3, 4, 7, 8 НЕ ПІДКЛ. │        │ Піни 4, 5, 7, 8 НЕ ПІДКЛЮЧАТИ!       │
 └──────────────────────────────┘        └──────────────────────────────────────┘
 </code></pre>
+<div class="table-card"><table>
+<thead>
+<tr>
+<th style="text-align: center;">Маркування кабелю RS485</th>
+<th style="text-align: center;">Штекер COM-Box <code>(P6.5)</code></th>
+<th style="text-align: center;">Штекер батареї Vision <code>(P2.1)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="Маркування кабелю" src="docs/images/cable_rs485_labels.jpg"/></td>
+<td style="text-align: center;"><img alt="Роз'єм P6.5" src="docs/images/cable_rs485_p65.jpg"/></td>
+<td style="text-align: center;"><img alt="Роз'єм P2.1" src="docs/images/cable_rs485_p21.jpg"/></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>Бірка <code>P6.5</code> ↔ <code>P2.1</code></strong></td>
+<td style="text-align: center;"><strong>Розшито піни 6 та 5</strong></td>
+<td style="text-align: center;"><strong>Розшито піни 2 та 1</strong></td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-card"><table>
+<thead>
+<tr>
+<th style="text-align: center;">Підключення до порту COM-Box <code>BMS-485</code></th>
+<th style="text-align: center;">Підключення до порту батареї Vision <code>RS485</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="Підключення до COM-Box" src="docs/images/combox_connected_rs485_cable.jpg"/></td>
+<td style="text-align: center;"><img alt="Підключення до батареї Vision" src="docs/images/battery_connected_cable.jpg"/></td>
+</tr>
+<tr>
+<td style="text-align: center;">➡️ <strong>Порт <code>BMS-485</code> на коробці</strong></td>
+<td style="text-align: center;">➡️ <strong>Порт <code>RS485</code> на головній АКБ</strong></td>
+</tr>
+</tbody>
+</table></div>
 <hr/>
 <h2 id="4-vision-v-lfp48100">4. Налаштування акумуляторів Vision V-LFP48100</h2>
 <h3 id="41-id-dip">4.1. Адресація блоків (перемикачі ID / DIP на панелі АКБ)</h3>

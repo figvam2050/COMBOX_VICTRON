@@ -119,3 +119,4 @@ pio run -e genericGD32F305_app
 python3 tools/bms_web.py --port /dev/tty.usbserial-XXXX
 ```
 Відкрити у браузері: `http://localhost:8080`.
+

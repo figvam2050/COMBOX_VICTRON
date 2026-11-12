@@ -111,17 +111,17 @@ static uint16_t modbus_crc16(const volatile uint8_t *data, uint16_t len) {
 #define CHARGE_CURRENT_LIMIT_DEFAULT 0
 #define DISCHARGE_CURRENT_LIMIT_DEFAULT 0
 
-#define CHARGE_VOLTAGE_LIMIT_STATIC 525 // 52.5 V (3.50 V/cell * 15): Victron 15S absorption/bulk voltage
+#define CHARGE_VOLTAGE_LIMIT_STATIC 532 // 53.2 V (3.546 V/cell * 15): Victron/Pylontech 15S absorption/bulk voltage
 #define CHARGE_VOLTAGE_LIMIT_FLOAT 510  // 51.0 V (3.40 V/cell * 15): Victron 15S float voltage
 #define CHARGE_VOLTAGE_LIMIT_DIP90 518  // 51.8 V (3.45 V/cell * 15): 90% conservative profile
-#define CHARGE_VOLTAGE_LIMIT_FLOAT_HOLD 525 // 52.5 V: hold voltage during balancing
+#define CHARGE_VOLTAGE_LIMIT_FLOAT_HOLD 525 // 52.5 V: hold voltage during balancing session
+#define DISCHARGE_VOLTAGE_LIMIT_X10 440 // 44.0 V: Victron MultiPlus recommended low DC shut-down (15S)
 
 // Per-pack charge current limit, selected by DIP4 (SW4, PB15):
 // OFF (default) = 50 A (battery manufacturer maximum), ON = 15 A (0.15C gentle current limit mode).
 #define CHARGE_CURRENT_LIMIT_PER_PACK_DIP4_LIMIT_X10 150
 #define CHARGE_CURRENT_LIMIT_PER_PACK_X10 500
 #define DISCHARGE_CURRENT_LIMIT_PER_PACK_X10 1000
-#define DISCHARGE_VOLTAGE_LIMIT_X10 450
 
 // Max-cell charge taper: nominal per-pack limit (50 A default / 15 A DIP4) to 0 A between 3.450 V and 3.600 V.
 // Re-enabling below 3.550 V prevents charge-limit oscillation at the cutoff.
@@ -136,9 +136,8 @@ static uint16_t modbus_crc16(const volatile uint8_t *data, uint16_t len) {
 // When a pack trips hardware OV (0x0002 or >=3650mV), BMS hardware charge FET stays
 // locked until the highest cell in that pack drops <= 3420 mV.
 #define CELL_OV_RELEASE_BMS_MV 3420
-// DIP1 OFF (default) = standard 54.0 V mode (100% profile, full thresholds);
-// DIP1 ON = 51.8 V option (90% profile, economy thresholds, auto balance
-// sessions disabled, trickle cap from 3400 mV, LED1 solid indicator).
+// DIP1 OFF (default) = standard 100% profile (CVL 53.2 V, balancing active);
+// DIP1 ON = 90% economy profile (CVL 51.8 V, 3.45 V/cell, extended battery life, LED1 solid).
 // Bit moved from SW4 on 17.10.2026 (convenient end switch, silkscreen "SW1"
 // near the PCS-485/CAN jacks); stock SW1 protocol meaning (PYLON) unused.
 #define DIP_PROFILE_CODE_90 1
@@ -304,7 +303,7 @@ static uint8_t calc_adaptive_soc(uint16_t avg_cell_mv, uint16_t min_cell_mv,
 #define TEMP_DISCHARGE_MAX_REENABLE_C 58.0f
 
 // ===== Balance session engine (17.10.2026, updated 11.11.2026) =====
-// DIP1 OFF (standard): CVL 54.0 V; auto balance windows (BAL_AUTO_ENABLED)
+// DIP1 OFF (standard): CVL 53.2 V (Victron Pylontech profile); auto balance windows (BAL_AUTO_ENABLED)
 // open on cell-spread analysis: full thresholds + 2 A per pack cap.
 // DIP1 ON (51.8 V option): 90% profile (51.8 V) with gentle 2 A trickle from 3400 mV;
 // adaptive balance Float Hold (52.5 V) runs at most once per 14 days (90 min cap)
@@ -1644,7 +1643,7 @@ static uint16_t calculate_discharge_limit(uint8_t pack_count) {
 }
 
 // ===== Balance session engine (17.10.2026, updated 11.11.2026) =====
-// DIP1 OFF (standard 54.0 V): auto sessions (BAL_AUTO_ENABLED) driven by
+// DIP1 OFF (standard 53.2 V): auto sessions (BAL_AUTO_ENABLED) driven by
 // cell-spread analysis open balance windows (CVL stays 54 V; thresholds stay
 // full; current capped at 2 A per pack once min cell >= 3400 mV).
 // DIP1 ON (51.8 V option): 90% profile (51.8 V) with 2 A trickle from 3400 mV;
@@ -1970,7 +1969,7 @@ static void balance_update(uint8_t packs) {
 //     5 blinks = BMS RS-485 communication lost
 // - 1 Hz slow blink = active or paused balance session (auto or DIP5 forced)
 // - Solid ON = 51.8 V option (DIP1 ON)
-// - OFF = standard 54.0 V normal operation.
+// - OFF = standard 53.2 V normal operation.
 static void balance_led_tick(uint32_t now) {
   static bool on = false;
   static uint32_t last_toggle = 0;

@@ -498,12 +498,18 @@ hr {
 <p>Через програму <strong>VictronConnect</strong> (або <strong>VEConfigure 3</strong> через перехідник MK3-USB):</p>
 <ol>
 <li><strong>Вкладка Charger (Зарядний пристрій):</strong></li>
-<li><strong>Battery type:</strong> Оберіть профіль <em>Lithium Iron Phosphate (LiFePO4)</em> або залиште базові значення:</li>
-<li><strong>Absorption voltage:</strong> <strong><code>52.0 В – 52.5 В</code></strong></li>
+<li><strong>Battery type:</strong> Оберіть профіль <em>Lithium Iron Phosphate (LiFePO4)</em> або встановіть рекомендовані значення Victron для 15S Pylontech:</li>
+<li><strong>Absorption voltage:</strong> <strong><code>52.0 В</code></strong> (або 52.4 В за наявності DVCC)</li>
 <li><strong>Float voltage:</strong> <strong><code>51.0 В</code></strong></li>
+<li><strong>Absorption time:</strong> <strong><code>1 година</code></strong></li>
 <li><strong>Charge current:</strong> Встановіть максимальний ліміт із розрахунку 50 А на кожен підключений блок (наприклад, для 4 блоків — до 120–150 А).</li>
+<li><strong>Вкладка Inverter (Захист за низькою напругою DC):</strong></li>
+<li><strong>DC input low shut-down:</strong> <strong><code>44.0 В</code></strong> (рекомендація Victron для 15S)</li>
+<li><strong>DC input low restart:</strong> <strong><code>48.0 В</code></strong></li>
+<li><strong>DC input low pre-alarm:</strong> <strong><code>48.0 В</code></strong></li>
 <li><strong>Вкладка ESS (Energy Storage System), якщо використовується мережевий режим:</strong></li>
-<li>Увімкніть режим ESS. Завдяки увімкненому DVCC інвертор автоматично підпорядковується всім командам Cerbo GX.</li>
+<li><strong>Dynamic cut-off:</strong> <strong><code>46.0 В</code></strong> (для всіх струмів розряду за інструкцією Victron Pylontech)</li>
+<li><strong>Sustain voltage:</strong> <strong><code>48.0 В</code></strong></li>
 </ol>
 <hr/>
 <h2 id="7-com-box">7. Логіка роботи та алгоритми безпеки COM-Box</h2>
@@ -514,7 +520,7 @@ hr {
 </ul>
 <h3 id="72-float-510">7.2. Автоматичний перехід у режим Float (51.0 В)</h3>
 <ul>
-<li>Як тільки всі акумулятори в банку перейшли в стан повної зарядки (Standby), COM-Box знижує запит напруги <strong>CVL з 52.5 В до 51.0 В</strong>.</li>
+<li>Як тільки всі акумулятори в банку перейшли в стан повної зарядки (Standby), COM-Box знижує запит напруги <strong>CVL до 51.0 В</strong> (3.40 В/комірку).</li>
 <li>Інвертор MultiPlus-II м'яко переходить у стан зберігання (Float) зі струмом 0.0 А, не створюючи перевантажень та не викликаючи аварій.</li>
 </ul>
 <h3 id="73-2-c">7.3. Температурний захист від заряду на морозі (&lt; +2 °C)</h3>
@@ -536,8 +542,8 @@ hr {
 <tr>
 <td style="text-align: center;"><strong>SW1</strong></td>
 <td><strong>Профіль напруги (CVL)</strong></td>
-<td><strong>100% (52.5 В)</strong> — стандартний режим 15S LiFePO4</td>
-<td><strong>90% (51.8 В)</strong> — ощадливий режим (максимальний життєвий ресурс комірок)</td>
+<td><strong>100% (53.2 В)</strong> — стандартний профіль 15S LiFePO4 (активні балансири)</td>
+<td><strong>90% (51.8 В)</strong> — ощадливий режим (максимальний ресурс комірок)</td>
 </tr>
 <tr>
 <td style="text-align: center;"><strong>SW2</strong></td>

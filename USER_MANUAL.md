@@ -57,16 +57,18 @@
 
 ### 3.1. Спеціальний кабель CAN: COM-Box ➔ Victron Cerbo GX
 
-![Розпіновка порту Cerbo GX BMS-Can](docs/images/cerbo_gx_can_pinout.png)
+| Огляд комунікаційних портів Cerbo GX | Схема розпіновки порту BMS-Can / VE.Can |
+| :---: | :---: |
+| ![Огляд портів Cerbo GX](docs/images/cerbo_gx_ports_overview.png) | ![Розпіновка порту Cerbo GX BMS-Can](docs/images/cerbo_gx_can_pinout.png) |
 
-Для підключення виготовляється або обтискається трижильний крос-кабель крученої пари (UTP Cat5e/Cat6):
+Для підключення виготовляється або обтискається трижильний крос-кабель крученої пари (UTP Cat5e/Cat6) згідно з офіційним стандартом [Victron CAN-bus BMS Cable Guide](https://www.victronenergy.com/live/battery_compatibility:can-bus_bms-cable):
 
 ```
 Сторона COM-Box (Порт PCS-CAN)          Сторона Victron Cerbo GX (Порт BMS-Can)
 ┌──────────────────────────────┐        ┌──────────────────────────────────────┐
 │ Pin 8 (CAN-H) ───────────────┼────────┼──► Pin 7 (CAN-H)                     │
 │ Pin 7 (CAN-L) ───────────────┼────────┼──► Pin 8 (CAN-L)                     │
-│ Pin 1 (GND)   ───────────────┼────────┼──► Pin 3 (GND / NET-S)               │
+│ Pin 1 (GND)   ───────────────┼────────┼──► Pin 3 (GND / NET-C)               │
 │                              │        │                                      │
 │ Піни 2, 3, 4, 5, 6 НЕ ПІДКЛ. │        │ Піни 1, 2, 4, 5, 6 НЕ ПІДКЛЮЧАТИ!   │
 └──────────────────────────────┘        └──────────────────────────────────────┘

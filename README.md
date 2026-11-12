@@ -54,15 +54,17 @@
 > ⚠️ **КРИТИЧНО ВАЖЛИВО:** Прямий комп'ютерний патч-корд RJ45 використовувати **СУВОРО ЗАБОРОНЕНО**!  
 > Піни 7 та 8 на платах COM-Box та Cerbo GX мають протилежне призначення. Пряме з'єднання призведе до замикання CAN-H на CAN-L!
 
-![Розпіновка роз'єму Cerbo GX CAN](docs/images/cerbo_gx_can_pinout.png)
+| Огляд портів Victron Cerbo GX | Схема розпіновки порту Cerbo GX BMS-Can / VE.Can |
+| :---: | :---: |
+| ![Огляд портів Cerbo GX](docs/images/cerbo_gx_ports_overview.png) | ![Розпіновка роз'єму Cerbo GX CAN](docs/images/cerbo_gx_can_pinout.png) |
 
-#### Схема крос-кабелю CAN:
+#### Схема крос-кабелю CAN (згідно з [Victron CAN-bus BMS Cable Guide](https://www.victronenergy.com/live/battery_compatibility:can-bus_bms-cable)):
 ```
 Сторона COM-Box (PCS-CAN)               Сторона Victron Cerbo GX (BMS-Can)
 ┌───────────────────────┐               ┌────────────────────────┐
 │ Pin 8 (CAN-H) ────────┼───────────────┼──► Pin 7 (CAN-H)       │
 │ Pin 7 (CAN-L) ────────┼───────────────┼──► Pin 8 (CAN-L)       │
-│ Pin 1 (GND)   ────────┼───────────────┼──► Pin 3 (GND / NET-S) │
+│ Pin 1 (GND)   ────────┼───────────────┼──► Pin 3 (GND / NET-C) │
 │ (решта не підключені) │               │ (решта не підключені)  │
 └───────────────────────┘               └────────────────────────┘
 ```

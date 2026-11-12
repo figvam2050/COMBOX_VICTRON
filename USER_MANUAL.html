@@ -290,14 +290,27 @@ hr {
 <strong>НІКОЛИ НЕ ВИКОРИСТОВУЙТЕ ЗВИЧАЙНИЙ ПРЯМИЙ ПАТЧ-КОРД ДЛЯ З'ЄДНАННЯ З CERBO GX!</strong><br/>
 У гнізді COM-Box <code>PCS-CAN</code> лінія CAN-H розведена на Pin 8, а у Victron Cerbo GX на Pin 8 знаходиться лінія CAN-L. Якщо вставити прямий кабель, диференційні лінії CAN-H та CAN-L замкнуться між собою, зв'язок не запуститься, а трансивер може вийти з ладу!</p>
 </blockquote>
-<h3 id="31-can-com-box-victron-cerbo-gx">3.1. Спеціальний кабель CAN: COM-Box ➔ Victron Cerbo GX</h3>
-<p><img alt="Розпіновка порту Cerbo GX BMS-Can" src="docs/images/cerbo_gx_can_pinout.png"/></p>
-<p>Для підключення виготовляється або обтискається трижильний крос-кабель крученої пари (UTP Cat5e/Cat6):</p>
+<div class="table-card"><h3 id="31-can-com-box-victron-cerbo-gx">3.1. Спеціальний кабель CAN: COM-Box ➔ Victron Cerbo GX</h3><table>
+<thead>
+<tr>
+<th style="text-align: center;">Огляд комунікаційних портів Cerbo GX</th>
+<th style="text-align: center;">Схема розпіновки порту BMS-Can / VE.Can</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="Огляд портів Cerbo GX" src="docs/images/cerbo_gx_ports_overview.png"/></td>
+<td style="text-align: center;"><img alt="Розпіновка порту Cerbo GX BMS-Can" src="docs/images/cerbo_gx_can_pinout.png"/></td>
+</tr>
+</tbody>
+</table></div>
+
+<p>Для підключення виготовляється або обтискається трижильний крос-кабель крученої пари (UTP Cat5e/Cat6) згідно з офіційним стандартом <a href="https://www.victronenergy.com/live/battery_compatibility:can-bus_bms-cable">Victron CAN-bus BMS Cable Guide</a>:</p>
 <pre><code>Сторона COM-Box (Порт PCS-CAN)          Сторона Victron Cerbo GX (Порт BMS-Can)
 ┌──────────────────────────────┐        ┌──────────────────────────────────────┐
 │ Pin 8 (CAN-H) ───────────────┼────────┼──► Pin 7 (CAN-H)                     │
 │ Pin 7 (CAN-L) ───────────────┼────────┼──► Pin 8 (CAN-L)                     │
-│ Pin 1 (GND)   ───────────────┼────────┼──► Pin 3 (GND / NET-S)               │
+│ Pin 1 (GND)   ───────────────┼────────┼──► Pin 3 (GND / NET-C)               │
 │                              │        │                                      │
 │ Піни 2, 3, 4, 5, 6 НЕ ПІДКЛ. │        │ Піни 1, 2, 4, 5, 6 НЕ ПІДКЛЮЧАТИ!   │
 └──────────────────────────────┘        └──────────────────────────────────────┘

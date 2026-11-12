@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tools/can_sniff.py — Пасивний/Активний CAN-сніфер та декодер протоколу Deye/Pylontech.
+"""tools/can_sniff.py — Пасивний/Активний CAN-сніфер та декодер протоколу Pylontech CAN / Victron.
 
 Підтримує USB-адаптери з протоколом SLCAN (Lawicel ASCII):
   * WeAct USB to CAN Module V2 (STM32G431, USB2CANV2 ComPort)
@@ -10,14 +10,14 @@
   2. Ініціалізація шини на 500 кбіт/с (S6):
      - Режим Normal (з ACK, команда 'O'): для тестового стенда без інвертора.
      - Режим Listen-Only (без ACK, команда 'L'): безпечний пасивний моніторинг шини з інвертором.
-  3. Декодування стандартних кадрів COM-Box та Deye:
+  3. Декодування стандартних кадрів COM-Box та Cerbo GX:
      - 0x351: Ліміти заряд/розряд (CVL, CCL, DCL, DVL)
      - 0x355: SOC (%) та SOH (%)
      - 0x356: Напруга (В), знаковий струм (А, заряд/розряд), температура (°C)
      - 0x359: Біти захистів (Protect), аварій (Alarms), кількість паків, маркер 'PN'
      - 0x35C: Прапорці дозволів і запитів (Charge/Discharge EN, Request Full Charge / Баланс)
      - 0x35E: Бренд акумулятора (ASCII 'PYLON   ')
-     - 0x305: Серцебиття / системний час інвертора Deye (PCS Time)
+     - 0x305: Серцебиття / системний час (PCS Time)
   4. Селфтест (--selftest) для перевірки декодування без підключеного заліза.
 
 Використання:
@@ -26,7 +26,7 @@
   python3 tools/can_sniff.py
   python3 tools/can_sniff.py --port /dev/cu.usbmodemB24D205D38631
   python3 tools/can_sniff.py --listen-only
-  python3 tools/can_sniff.py --duration 30 --out deye/can_test.log
+  python3 tools/can_sniff.py --duration 30 --out can_test.log
 """
 
 import argparse
@@ -58,7 +58,7 @@ class CanFrame:
 
 
 # ---------------------------------------------------------------------------
-# Декодери бітових полів Deye / Pylontech
+# Декодери бітових полів Pylontech / Victron
 # ---------------------------------------------------------------------------
 
 PROT_B0_MAP = [
@@ -130,7 +130,7 @@ def parse_slcan_line(line: str) -> Optional[CanFrame]:
 
 
 def decode_can_frame(f: CanFrame) -> str:
-    """Декодує CAN-кадр протоколу Deye/Pylontech у зрозумілий людині текст."""
+    """Декодує CAN-кадр протоколу Pylontech / Victron у зрозумілий людині текст."""
     cid = f.can_id
     d = f.data
 
@@ -293,7 +293,7 @@ class SlcanBus:
 
 def run_selftest() -> int:
     print("=" * 65)
-    print("CAN-SNIFF SELFTEST: Перевірка парсингу та декодування Deye/Pylontech")
+    print("CAN-SNIFF SELFTEST: Перевірка парсингу та декодування Pylontech / Victron")
     print("=" * 65)
 
     test_vectors = [
@@ -335,7 +335,7 @@ def run_selftest() -> int:
 # ---------------------------------------------------------------------------
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Сніфер та декодер шини CAN для COM-Box та Deye (SLCAN / WeAct)")
+    parser = argparse.ArgumentParser(description="Сніфер та декодер шини CAN для COM-Box та Cerbo GX (SLCAN / WeAct)")
     parser.add_argument("--selftest", action="store_true", help="Запуск тестів перевірки парсера кадрів")
     parser.add_argument("--list", action="store_true", help="Список доступних COM-портів")
     parser.add_argument("-p", "--port", type=str, default=None, help="COM-порт адаптера (наприклад /dev/cu.usbmodem...)")
@@ -386,7 +386,7 @@ def main() -> int:
         return 1
 
     out_lines: List[str] = []
-    out_path = args.out or f"deye/can_sniff_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
+    out_path = args.out or f"can_sniff_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
     header = [
         f"# CAN sniff (SLCAN)  port={target_port} speed={args.speed} mode={mode_name}",
         f"# Date: {datetime.now():%Y-%m-%d %H:%M:%S}",

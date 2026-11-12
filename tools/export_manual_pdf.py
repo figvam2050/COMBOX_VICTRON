@@ -325,7 +325,8 @@ def main():
     page_break_ids = [
         "2",                      # Розділ 2: Фізичні роз'єми та кабелі
         "4-dip-com-box",          # Розділ 4: Налаштування DIP-перемикачів
-        "6-deye",                 # Розділ 6: Налаштування Deye
+        "5-cerbo",                # Розділ 5: Налаштування Cerbo GX
+        "6-multiplus",            # Розділ 6: Налаштування MultiPlus-II
         "8-dip-11",               # Розділ 8: Сценарії при графіках відключень
         "9-",                     # Розділ 9: Чек-лист запуску
         "10-troubleshooting",     # Розділ 10: Troubleshooting
@@ -348,7 +349,7 @@ def main():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COM-Box V1.3 — Посібник користувача та монтажника</title>
+<title>COM-Box Victron Edition — Посібник користувача</title>
 <style>
 {CSS_STYLES}
 </style>

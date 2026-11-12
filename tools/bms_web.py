@@ -3472,7 +3472,7 @@ function renderDipModalContent() {
     </div>
 
     <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;line-height:1.5">
-      ℹ️ Перемикачі DIP розташовані на торці пристрою COM-Box. Важіль <b>ВГОРУ = ON</b>, <b>ВНИЗ = OFF</b>. Виберіть положення нижче, щоб система показала активні алгоритми, цільову напругу та струми для інвертора Deye.
+      ℹ️ Перемикачі DIP розташовані на торці пристрою COM-Box. Важіль <b>ВГОРУ = ON</b>, <b>ВНИЗ = OFF</b>. Виберіть положення нижче, щоб система показала активні алгоритми, цільову напругу та струми для системи Victron.
     </div>
 
     <table class="tbl" style="margin-bottom:16px">
@@ -3607,7 +3607,7 @@ function openInverterModal() {
       <div>
         <h2 style="margin:0;font-size:20px;color:var(--fg)">⚙️ Рекомендовані уставки для інвертора</h2>
         <div style="color:var(--dim);font-size:12px;margin-top:4px">
-          Deye · Victron · Luxpower · Growatt · Voltronic для <b>${packCount} АКБ (${cellCount}S LiFePO4, ${capAh} А·ч / ~${kwh} кВт·год)</b>
+          Victron Energy · MultiPlus-II для <b>${packCount} АКБ (${cellCount}S LiFePO4, ${capAh} А·ч / ~${kwh} кВт·год)</b>
         </div>
       </div>
       <button class="modal-close-btn" onclick="closeInverterModal()">✕ Закрити</button>

@@ -17,9 +17,9 @@
 #include <string.h>
 
 #define BMS_BAUDRATE 9600
-#define BMS_TIMEOUT_MS 400         // 400 ms: matches Deye RS485 turnaround window for slow BMS
+#define BMS_TIMEOUT_MS 400         // 400 ms: turnaround window for slow BMS
 #define BMS_RESPONSE_LEN 83
-#define BMS_POLL_PERIOD_MS 400     // 400 ms per query: matches Deye inverter polling cadence
+#define BMS_POLL_PERIOD_MS 400     // 400 ms per query: stable polling cadence
 #define BMS_POLL_GAP_MS 20         // 20 ms minimum bus quiet gap between RS485 transactions
 #define BMS_DEFAULT_TIMEOUT_MS 8000 // 8 s fail-closed: covers full 16-addr sweep (16 * 400 ms = 6.4 s)
 #define BMS_SEARCH_TIMEOUT_MS 80      // 80 ms: if line is silent for 80 ms during boot search, address is empty
@@ -252,7 +252,7 @@ static uint8_t calc_adaptive_soc(uint16_t avg_cell_mv, uint16_t min_cell_mv,
                                  uint16_t max_cell_mv, float current_a,
                                  float pack_v) {
   uint8_t soc = 0;
-  // Deye CAN: current < -0.5A is charge, current > +0.5A is discharge
+  // CAN 0x356: charge negative, discharge positive (Pylontech v2.0.6 standard)
   if (current_a < -0.5f) {
     uint8_t n = sizeof(lfp_charge_table) / sizeof(lfp_charge_table[0]);
     soc = interpolate_soc(lfp_charge_table, n, avg_cell_mv);
@@ -359,7 +359,7 @@ static uint8_t calc_adaptive_soc(uint16_t avg_cell_mv, uint16_t min_cell_mv,
 #define CAN_PROT_SYSTEM_ERROR  0x08
 
 // RS485 register units -> physical units. Confirm against the battery model.
-// reg1 current: 1 = BMS reports charge as positive (negated for Deye CAN),
+// reg1 current: 1 = BMS reports charge as positive (negated for CAN 0x356),
 //               0 = BMS reports discharge as positive (passed through).
 #define BMS_CURRENT_CHARGE_IS_POSITIVE 1
 // reg19 temperature raw divisor: 1 = reg 0x13 holds whole C (dump 08.10.2026).
@@ -389,12 +389,12 @@ static uint8_t calc_adaptive_soc(uint16_t avg_cell_mv, uint16_t min_cell_mv,
 #define PCS_RX_RCU RCU_GPIOD
 #define PCS_RX_PIN GPIO_PIN_2
 
-#define DEYE_CAN CAN0
-#define DEYE_CAN_RCU RCU_CAN0
-#define DEYE_CAN_GPIO_PORT GPIOB
-#define DEYE_CAN_GPIO_RCU RCU_GPIOB
-#define DEYE_CAN_RX_PIN GPIO_PIN_8
-#define DEYE_CAN_TX_PIN GPIO_PIN_9
+#define PCS_CAN CAN0
+#define PCS_CAN_RCU RCU_CAN0
+#define PCS_CAN_GPIO_PORT GPIOB
+#define PCS_CAN_GPIO_RCU RCU_GPIOB
+#define PCS_CAN_RX_PIN GPIO_PIN_8
+#define PCS_CAN_TX_PIN GPIO_PIN_9
 
 // LED assignment per PORT_MAPPING.md §4 (factory panel labels, 17.10.2026):
 //   LED5 (PB0)  = system running (program alive) — steady ON after init;
@@ -669,7 +669,7 @@ static void rs485_flush_rx(void) {
 //   are dropped, the inverter just times out).
 //   PRODUCTION KEEPS DIP2 OFF — 13.10 analysis: the inverter would read raw
 //   packs over RS485, bypassing our CCL stop-tap aggregation; this mode is
-//   research/diagnostics (DEYE_CAN_RS485_BASE.md §Q23, TODO §5.1).
+//   research/diagnostics.
 #define DIP2_BRIDGE_MODE 0x02
 #define PCS_GAP_MS 5           // ~3.5 idle chars at 9600 (3.65 ms): Modbus frame gap
 #define PCS_RESP_FIRST_MS 300  // BMS must start answering within this
@@ -1127,7 +1127,7 @@ static void bms_poll_step(uint32_t now) {
       break;
     }
 
-    // Partial response followed by inter-byte gap (e.g. 61 B Deye inverter window)
+    // Partial response followed by inter-byte gap
     if (uart_rx_index >= 5 && (now - bms_fsm_last_byte_ms) >= PCS_GAP_MS) {
       rs485_clear_errors();
       gpio_bit_reset(LED_BMS485_PORT, LED_BMS485_PIN);
@@ -1180,7 +1180,7 @@ static bool bms_parse_response(uint8_t expected_addr) {
   if (uart_rx_buffer[0] != expected_addr || uart_rx_buffer[1] != 0x03)
     return false;
   // Byte count: our own window is 0x4E (39 regs, 83 B); a bridged inverter
-  // frame (Deye) asks 0x38 (28 regs, 61 B). Other windows (e.g. reg 0x50)
+  // frame asks 0x38 (28 regs, 61 B). Other windows (e.g. reg 0x50)
   // are not ours — they stay transparent and are never aggregated.
   uint16_t data_bytes = uart_rx_buffer[2];
   if (data_bytes != 0x4E && data_bytes != 0x38)
@@ -1288,7 +1288,7 @@ static bool bms_parse_response(uint8_t expected_addr) {
   // Cross-validate with physical measurements to reject transient Boot Latch flags (Q17):
   // Confirmation uses physical threshold CELL_PHYSICAL_OV_CONFIRM_MV (3600 mV), NOT calc_charge_stop_mv,
   // so that activating the 90% software taper profile never generates false emergency cell OV alarms.
-  // In Pylontech/Deye protocol, byte 0 CAN_PROT_CELL_OV / PACK_OV are fatal trip conditions that shut down
+  // In Pylontech protocol, byte 0 CAN_PROT_CELL_OV / PACK_OV are fatal trip conditions that shut down
   // EPS/backup inverter output. Charge cutoff is cleanly and safely handled via CCL=0 and 0x35C flags (0x80=0).
   // Therefore, cell/pack OV is reported in CAN alarm byte 2 (warning/alarm), and only promoted to fatal protect
   // if confirmed emergency overvoltage (>= 3650 mV absolute limit) is breached across the bank.
@@ -1309,7 +1309,7 @@ static bool bms_parse_response(uint8_t expected_addr) {
     sweep_protect_b0 |= CAN_PROT_CELL_UV;
   if ((reg_protect & 0x0300) || pack_t_max >= TEMP_DISCHARGE_MAX_C)
     sweep_protect_b0 |= CAN_PROT_OT;
-  // System-level UT protection stops both charge and discharge in Deye; trigger only if battery
+  // System-level UT protection stops charge; trigger only if battery
   // is under the physical discharge limit (-20°C) or BMS asserts protection (charge limit handled via CCL=0):
   if ((reg_protect & 0x0C00) || pack_t_min <= TEMP_DISCHARGE_MIN_C)
     sweep_protect_b0 |= CAN_PROT_UT;
@@ -1486,7 +1486,7 @@ static uint16_t calculate_charge_limit(uint8_t pack_count) {
   // Cell voltage cut-off:
   // In a balance session, hard cutoff is pushed to CELL_EMERGENCY_OV_MV (3620 mV)
   // because float-hold voltage regulation (52.5 V) prevents cells from staying too high,
-  // avoiding premature 0 A cutoffs that force Deye into Standby.
+  // avoiding premature 0 A cutoffs that force inverter into Standby.
   uint16_t stop_mv = is_bal ? CELL_EMERGENCY_OV_MV : calc_charge_stop_mv;
   uint16_t reenable_mv = is_bal ? (CELL_EMERGENCY_OV_MV - 50) : calc_charge_reenable_mv;
   if (agg_max_cell_mv >= stop_mv) {
@@ -2081,7 +2081,7 @@ static void bms_aggregate_data(void) {
     return;
 
   bms_voltage = agg_voltage_sum / (float)agg_count;
-  // Deye PCS CAN V3.3: 0x356 current is discharge positive, charge negative.
+  // Pylontech CAN v2.0.6: 0x356 current is discharge positive, charge negative.
   bms_current = BMS_CURRENT_CHARGE_IS_POSITIVE ? -agg_current_sum
                                                : agg_current_sum;
 
@@ -2268,16 +2268,16 @@ static void bms_aggregate_data(void) {
 
 static void can_init_500k(void) {
   rcu_periph_clock_enable(RCU_AF);
-  rcu_periph_clock_enable(DEYE_CAN_GPIO_RCU);
-  rcu_periph_clock_enable(DEYE_CAN_RCU);
+  rcu_periph_clock_enable(PCS_CAN_GPIO_RCU);
+  rcu_periph_clock_enable(PCS_CAN_RCU);
   gpio_pin_remap_config(GPIO_SWJ_SWDPENABLE_REMAP, ENABLE); // Preserve SWD (PA13/PA14)
   gpio_pin_remap_config(GPIO_CAN_PARTIAL_REMAP, ENABLE);
-  gpio_init(DEYE_CAN_GPIO_PORT, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ,
-            DEYE_CAN_RX_PIN);
-  gpio_init(DEYE_CAN_GPIO_PORT, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ,
-            DEYE_CAN_TX_PIN);
+  gpio_init(PCS_CAN_GPIO_PORT, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ,
+            PCS_CAN_RX_PIN);
+  gpio_init(PCS_CAN_GPIO_PORT, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ,
+            PCS_CAN_TX_PIN);
 
-  can_deinit(DEYE_CAN);
+  can_deinit(PCS_CAN);
   can_parameter_struct params;
   can_struct_para_init(CAN_INIT_STRUCT, &params);
   params.auto_bus_off_recovery = ENABLE;
@@ -2287,7 +2287,7 @@ static void can_init_500k(void) {
   params.time_segment_1 = CAN_BT_BS1_11TQ;
   params.time_segment_2 = CAN_BT_BS2_4TQ;
   params.prescaler = 1;
-  can_init(DEYE_CAN, &params);
+  can_init(PCS_CAN, &params);
 
   can_filter_parameter_struct filter;
   can_struct_para_init(CAN_FILTER_STRUCT, &filter);
@@ -2304,9 +2304,9 @@ static void can_init_500k(void) {
 }
 
 static bool can_mailbox_free(void) {
-  return (can_flag_get(DEYE_CAN, CAN_FLAG_TME0) == SET) ||
-         (can_flag_get(DEYE_CAN, CAN_FLAG_TME1) == SET) ||
-         (can_flag_get(DEYE_CAN, CAN_FLAG_TME2) == SET);
+  return (can_flag_get(PCS_CAN, CAN_FLAG_TME0) == SET) ||
+         (can_flag_get(PCS_CAN, CAN_FLAG_TME1) == SET) ||
+         (can_flag_get(PCS_CAN, CAN_FLAG_TME2) == SET);
 }
 
 static void send_can_std(uint32_t id, const uint8_t *data, uint8_t len) {
@@ -2325,12 +2325,12 @@ static void send_can_std(uint32_t id, const uint8_t *data, uint8_t len) {
   for (uint8_t i = 0; i < len; i++)
     tx_msg.tx_data[i] = data[i];
 
-  uint8_t mbox = can_message_transmit(DEYE_CAN, &tx_msg);
+  uint8_t mbox = can_message_transmit(PCS_CAN, &tx_msg);
   if (mbox == CAN_NOMAILBOX)
     return;
 
   uint32_t tx_start = millis();
-  while (can_transmit_states(DEYE_CAN, mbox) == CAN_TRANSMIT_PENDING) {
+  while (can_transmit_states(PCS_CAN, mbox) == CAN_TRANSMIT_PENDING) {
     pcs_poll_service(millis());
     if (millis() - tx_start >= 3)
       return;

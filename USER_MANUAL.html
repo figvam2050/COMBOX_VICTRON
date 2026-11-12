@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COM-Box V1.3 — Посібник користувача та монтажника</title>
+<style>
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    color: #1f2328;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #0f172a;
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+    border-bottom: 1px solid #d1d9e0;
+    padding-bottom: 0.25em;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+}
+h1 {
+    font-size: 22px;
+    border-bottom: 2.5px solid #0969da;
+    color: #0969da;
+}
+h2 {
+    font-size: 17px;
+    margin-top: 1.4em;
+    border-bottom: 1.5px solid #d1d9e0;
+}
+h3 {
+    font-size: 14.5px;
+    border-bottom: none;
+    color: #334155;
+}
+h4 {
+    font-size: 13.5px;
+    border-bottom: none;
+    color: #1e293b;
+    margin-top: 1em;
+}
+.table-card, .diagram-card, .scenario-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin: 14px 0;
+}
+.table-card > h1, .table-card > h2, .table-card > h3, .table-card > h4, .table-card > h5, .table-card > h6,
+.diagram-card > h1, .diagram-card > h2, .diagram-card > h3, .diagram-card > h4, .diagram-card > h5, .diagram-card > h6 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+}
+.table-card > p, .diagram-card > p {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+.scenario-card {
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-left: 4px solid #0969da;
+    border-radius: 6px;
+}
+.scenario-card > h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-size: 13.5px;
+}
+.scenario-card p {
+    margin: 6px 0;
+}
+.scenario-card ul {
+    margin: 6px 0;
+    padding-left: 20px;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    margin: 4px auto;
+    display: block;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+td img, th img {
+    max-height: 220px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
+}
+.image-row {
+    display: flex;
+    gap: 12px;
+    margin: 10px 0;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+.image-row img {
+    max-width: 48%;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 6px 0 0 0;
+    font-size: 11.5px;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+thead {
+    display: table-header-group;
+}
+th, td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 8px;
+    text-align: left;
+}
+tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+th {
+    background-color: #f1f5f9;
+    font-weight: 600;
+    color: #0f172a;
+}
+tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+pre {
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 10px 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 10.5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    border: 1px solid #334155;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin: 8px 0;
+}
+code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background-color: #f1f5f9;
+    color: #0969da;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 88%;
+}
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+blockquote {
+    margin: 12px 0;
+    padding: 10px 14px;
+    color: #1e293b;
+    background-color: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    border-radius: 4px;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+blockquote h3 {
+    margin-top: 0;
+    border: none;
+    color: #dc2626;
+}
+ul, ol {
+    padding-left: 22px;
+}
+li {
+    margin-bottom: 4px;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 18px 0;
+}
+@media print {
+    body {
+        max-width: 100%;
+        padding: 0;
+        font-size: 10pt;
+    }
+    @page {
+        margin: 12mm 14mm;
+        size: A4;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+    }
+    .table-card, .diagram-card, .scenario-card, pre, blockquote, tr, li, img, .image-row {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+}
+
+</style>
+</head>
+<body>
+<h1 id="com-box-victron-edition">Інструкція користувача: COM-Box Victron Edition</h1>
+<h3 id="vision-v-lfp48100-15s-lifepo4-victron-energy-cerbo-gx-multiplus-ii">Апаратний міст між акумуляторами Vision V-LFP48100 (15S LiFePO4) та екосистемою Victron Energy (Cerbo GX / MultiPlus-II)</h3>
+<hr/>
+<h2 id="1">1. Призначення пристрою</h2>
+<p><strong>COM-Box Victron Edition</strong> — це спеціалізований мікроконтролерний шлюз на базі процесора <strong>GD32F305</strong>, розроблений для повної безшовної інтеграції промислових літій-залізо-фосфатних акумуляторів <strong>Vision V-LFP48100 (15S 48V 100Ah)</strong> в енергетичні системи <strong>Victron Energy</strong>.</p>
+<p>Пристрій виконує дві ключові ролі:
+1. <strong>Збір телеметрії (RS-485 Modbus RTU):</strong> Безперервно опитує від 1 до 16 акумуляторних блоків Vision, збираючи точні напруги кожної комірки (15S), струми, температури, лічильники ємності, аварійні статуси та стан вбудованих балансирів.
+2. <strong>Керування системою Victron (CAN Bus @ 500 кбіт/с):</strong> Транслює агреговані параметри банку в системний контролер <strong>Victron Cerbo GX</strong> через стандартний протокол <strong>Pylontech CAN v2.0.6</strong>. Контролер Cerbo GX автоматично керує інвертором <strong>MultiPlus-II / Quattro</strong> через механізм <strong>DVCC</strong> (Distributed Voltage and Current Control).</p>
+<hr/>
+<h2 id="2-com-box">2. Апаратні роз'єми, індикація та живлення COM-Box</h2>
+<h3 id="21">2.1. Роз'єми на корпусі пристрою:</h3>
+<ul>
+<li><strong><code>BMS-485</code> (RJ45):</strong> Підключення до шини зв'язку акумуляторів Vision (порт <code>RS485</code> на провідному блоці АКБ).</li>
+<li><strong><code>PCS-CAN</code> (RJ45):</strong> Підключення до порту <strong>BMS-Can</strong> контролера Victron Cerbo GX.</li>
+<li><strong><code>PCS-485</code> (RJ45):</strong> Діагностичний порт зв'язку з ПК (моніторинг <code>bms_web.py</code>).</li>
+<li><strong><code>SW</code> (Блок із 5 DIP-перемикачів):</strong> Апаратне налаштування профілів заряду, режимів сканування та балансування.</li>
+<li><strong>Клеми живлення <code>B+</code> та <code>B-</code>:</strong> Підключення безпосередньо до шини акумуляторного банку (робочий діапазон <strong>від 15 В до 60 В DC</strong>).</li>
+<li><strong><code>B+</code></strong> — підключається до клеми <code>+48 В</code> акумулятора.</li>
+<li><strong><code>B-</code></strong> — підключається до клеми <code>GND</code> / <code>-</code> акумулятора.</li>
+</ul>
+<div class="diagram-card"><h3 id="22-com-box-led3led6">2.2. Світлодіодна індикація на кришці COM-Box (LED3..LED6):</h3><p>На верхній кришці розташовані 4 світлодіоди з шовкографією Felicity:</p><pre><code>┌────────────────────────────────────────────────────────┐
+│                     ВЕРХНЯ КРИШКА                      │
+│                                                        │
+│     ( 1 )        ( 2 )           ( 3 )       ( 4 )     │
+│    PCS-485      PCS-CAN         BMS-485     Running    │
+│    Connect      Connect         Connect                │
+└────────────────────────────────────────────────────────┘
+</code></pre></div>
+
+
+<div class="table-card"><table>
+<thead>
+<tr>
+<th>Індикатор на кришці</th>
+<th style="text-align: center;">Пін MCU</th>
+<th>Поведінка</th>
+<th>Опис та стан системи</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. PCS-485 Connect</strong></td>
+<td style="text-align: center;"><code>PC4</code></td>
+<td>Спалахує під час обміну</td>
+<td>Активність на порту <code>PCS-485</code> (підключено ПК або веб-діагностику <code>bms_web.py</code>).</td>
+</tr>
+<tr>
+<td><strong>2. PCS-CAN Connect</strong></td>
+<td style="text-align: center;"><code>PC5</code></td>
+<td>Спалахи з частотою <strong>1 Гц</strong></td>
+<td><strong>Активна трансляція CAN-телеметрії у Cerbo GX</strong> (пакети 0x351, 0x355, 0x356 тощо).</td>
+</tr>
+<tr>
+<td><strong>3. BMS-485 Connect</strong></td>
+<td style="text-align: center;"><code>PB1</code></td>
+<td>Короткі ритмічні спалахи</td>
+<td><strong>Активний обмін з акумуляторами Vision</strong> по RS-485 (кожен спалах — запит/відповідь блоку).</td>
+</tr>
+<tr>
+<td><strong>4. Running</strong></td>
+<td style="text-align: center;"><code>PB0</code></td>
+<td><strong>Світиться постійно</strong></td>
+<td>Ядро GD32 запущене, операційна система та алгоритми працюють стабільно.</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>(Додатково на платі: </em><em>LED1 (PC13)</em><em> блимає з частотою 1 Гц, коли активна сесія вирівнювання/балансування; </em><em>LED2</em><em> світиться постійно — живлення 3.3 В).</em></p>
+<hr/>
+<h2 id="3">3. Схеми кабелів підключення</h2>
+<blockquote>
+<p>⚠️ <strong>КРИТИЧНЕ ПОПЕРЕДЖЕННЯ З БЕЗПЕКИ:</strong><br/>
+<strong>НІКОЛИ НЕ ВИКОРИСТОВУЙТЕ ЗВИЧАЙНИЙ ПРЯМИЙ ПАТЧ-КОРД ДЛЯ З'ЄДНАННЯ З CERBO GX!</strong><br/>
+У гнізді COM-Box <code>PCS-CAN</code> лінія CAN-H розведена на Pin 8, а у Victron Cerbo GX на Pin 8 знаходиться лінія CAN-L. Якщо вставити прямий кабель, диференційні лінії CAN-H та CAN-L замкнуться між собою, зв'язок не запуститься, а трансивер може вийти з ладу!</p>
+</blockquote>
+<div class="diagram-card"><h3 id="31-can-com-box-victron-cerbo-gx">3.1. Спеціальний кабель CAN: COM-Box ➔ Victron Cerbo GX</h3><p>Для підключення виготовляється або обтискається трижильний крос-кабель крученої пари (UTP Cat5e/Cat6):</p><pre><code>Сторона COM-Box (Порт PCS-CAN)          Сторона Victron Cerbo GX (Порт BMS-Can)
+┌──────────────────────────────┐        ┌──────────────────────────────────────┐
+│ Pin 8 (CAN-H) ───────────────┼────────┼──► Pin 7 (CAN-H)                     │
+│ Pin 7 (CAN-L) ───────────────┼────────┼──► Pin 8 (CAN-L)                     │
+│ Pin 1 (GND)   ───────────────┼────────┼──► Pin 3 (GND / NET-S)               │
+│                              │        │                                      │
+│ Піни 2, 3, 4, 5, 6 НЕ ПІДКЛ. │        │ Піни 1, 2, 4, 5, 6 НЕ ПІДКЛЮЧАТИ!   │
+└──────────────────────────────┘        └──────────────────────────────────────┘
+</code></pre></div>
+
+
+<blockquote>
+<p><strong>Обов'язковий термінатор 120 Ом:</strong><br/>
+Шина CAN вимагає узгодження на обох кінцях лінії.<br/>
+У сусіднє вільне гніздо порту BMS-Can на Cerbo GX <strong>обов'язково вставте синій фірмовий термінатор 120 Ом (VE.Can Terminator)</strong>, що входить у комплект Cerbo GX.</p>
+</blockquote>
+<h3 id="32-rs-485-com-box-bms-485-vision-v-lfp48100-rs485">3.2. Кабель RS-485: COM-Box (BMS-485) ➔ Vision V-LFP48100 (RS485)</h3>
+<blockquote>
+<p>⚠️ <strong>УВАГА: Прямий патч-корд НЕ ПІДХОДИТЬ!</strong><br/>
+Згідно з офіційною специфікацією Felicity Solar COM-BOX, лінії опитування акумулятора виведені на <strong>Pin 5 (BMS-485B)</strong> та <strong>Pin 6 (BMS-485A)</strong>, тоді як у батареях Vision V-LFP48100 лінії даних знаходяться на <strong>Pin 1 (RS485-B)</strong> та <strong>Pin 2 (RS485-A)</strong>.</p>
+</blockquote>
+<p>Для з'єднання використовується адаптерний 3-жильний кабель:</p>
+<pre><code>Сторона COM-Box (Порт BMS-485)          Сторона Vision BMS (Порт RS485)
+┌──────────────────────────────┐        ┌──────────────────────────────────────┐
+│ Pin 6 (BMS-485A / Data +) ───┼────────┼──► Pin 2 (RS485-A / Data +)          │
+│ Pin 5 (BMS-485B / Data -) ───┼────────┼──► Pin 1 (RS485-B / Data -)          │
+│ Pin 1 (GND / Заземлення) ────┼────────┼──► Pin 3 або Pin 6 (GND)             │
+│                              │        │                                      │
+│ Піни 2, 3, 4, 7, 8 НЕ ПІДКЛ. │        │ Піни 4, 5, 7, 8 НЕ ПІДКЛЮЧАТИ!       │
+└──────────────────────────────┘        └──────────────────────────────────────┘
+</code></pre>
+<hr/>
+<h2 id="4-vision-v-lfp48100">4. Налаштування акумуляторів Vision V-LFP48100</h2>
+<h3 id="41-id-dip">4.1. Адресація блоків (перемикачі ID / DIP на панелі АКБ)</h3>
+<p>Кожен акумуляторний блок у паралельному ланцюзі повинен мати власну унікальну адресу Modbus.<br/>
+На лицьовій панелі акумулятора розташований червоний перемикач на 4 позиції з написом <strong>ID</strong>.</p>
+<blockquote>
+<p>⚠️ <strong>КРИТИЧНО ВАЖЛИВО: НАПРЯМОК ВІДЛІКУ БІТІВ (СПРАВА НАЛІВО)!</strong><br/>
+Цифри <code>1 2 3 4</code> на корпусі перемикача нанесені зліва направо, але <strong>вага розрядів адреси рахується СПРАВА НАЛІВО</strong>:
+* <strong>DIP 4 (крайній справа):</strong> Вага <strong>1</strong> (LSB). Важіль <strong>ВГОРУ (ON) = +1</strong>.
+* <strong>DIP 3 (другий справа):</strong> Вага <strong>2</strong>. Важіль <strong>ВГОРУ (ON) = +2</strong>.
+* <strong>DIP 2 (другий зліва):</strong> Вага <strong>4</strong>. Важіль <strong>ВГОРУ (ON) = +4</strong>.
+* <strong>DIP 1 (крайній зліва):</strong> Вага <strong>8</strong> (MSB). Важіль <strong>ВГОРУ (ON) = +8</strong>.</p>
+</blockquote>
+<div class="table-card"><table>
+<thead>
+<tr>
+<th style="text-align: center;">Номер блоку</th>
+<th style="text-align: center;">Адреса Modbus</th>
+<th style="text-align: center;">Положення важелів [DIP 1..4]</th>
+<th style="text-align: center;">DIP 1 (вага 8)</th>
+<th style="text-align: center;">DIP 2 (вага 4)</th>
+<th style="text-align: center;">DIP 3 (вага 2)</th>
+<th style="text-align: center;">DIP 4 (вага 1)</th>
+<th style="text-align: left;">Призначення</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>АКБ №1</strong></td>
+<td style="text-align: center;"><strong><code>0x01</code></strong></td>
+<td style="text-align: center;"><code>[ Вниз, Вниз, Вниз, ВГОРУ ]</code></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;"><strong>ON</strong></td>
+<td style="text-align: left;"><strong>Головний блок</strong> (сюди вмикається кабель від COM-Box)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>АКБ №2</strong></td>
+<td style="text-align: center;"><strong><code>0x02</code></strong></td>
+<td style="text-align: center;"><code>[ Вниз, Вниз, ВГОРУ, Вниз ]</code></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;"><strong>ON</strong></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: left;">Підлеглий блок (Slave 1)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>АКБ №3</strong></td>
+<td style="text-align: center;"><strong><code>0x03</code></strong></td>
+<td style="text-align: center;"><code>[ Вниз, Вниз, ВГОРУ, ВГОРУ ]</code></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;"><strong>ON</strong></td>
+<td style="text-align: center;"><strong>ON</strong></td>
+<td style="text-align: left;">Підлеглий блок (Slave 2)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>АКБ №4</strong></td>
+<td style="text-align: center;"><strong><code>0x04</code></strong></td>
+<td style="text-align: center;"><code>[ Вниз, ВГОРУ, Вниз, Вниз ]</code></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;"><strong>ON</strong></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: left;">Підлеглий блок (Slave 3)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>АКБ №5</strong></td>
+<td style="text-align: center;"><strong><code>0x05</code></strong></td>
+<td style="text-align: center;"><code>[ Вниз, ВГОРУ, Вниз, ВГОРУ ]</code></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;"><strong>ON</strong></td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;"><strong>ON</strong></td>
+<td style="text-align: left;">Підлеглий блок (Slave 4)</td>
+</tr>
+<tr>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: center;">...</td>
+<td style="text-align: left;">До 16 блоків включно</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="42">4.2. З'єднання акумуляторів між собою (Міжблочний ланцюжок)</h3>
+<ul>
+<li>Кабель <code>BMS-485</code> від COM-Box вставляється в будь-яке з двох паралельних гнізд з написом <strong>RS485</strong> головного блоку (АКБ №1, адреса <code>0x01</code>).</li>
+<li>Між собою блоки з'єднуються <strong>звичайним прямим патч-кордом RJ45</strong>: із сусіднього вільного роз'єму <code>RS485</code> блоку №1 у роз'єм <code>RS485</code> блоку №2, далі від блоку №2 до блоку №3 за ланцюжковою топологією (Daisy Chain).</li>
+</ul>
+<hr/>
+<h2 id="5-cerbo-gx-venus-os">5. Покрокове налаштування Cerbo GX (Venus OS)</h2>
+<p>Підключіться до вебінтерфейсу Cerbo GX (або через сенсорний екран GX Touch / Remote Console на VRM Portal):</p>
+<h3 id="1-can-">Крок 1. Активація профілю CAN-порту</h3>
+<ol>
+<li>Перейдіть у меню: <strong><code>Settings</code> ➔ <code>Services</code> ➔ <code>VE.Can port</code></strong> (або <code>BMS-Can port</code>).</li>
+<li>У пункті <strong><code>CAN-bus profile</code></strong> оберіть:
+   <code>CAN-bus BMS (500 kbit/s)</code></li>
+<li>Після вибору зачекайте 3–5 секунд. У головному списку пристроїв (<strong>Device List</strong>) автоматично з'явиться новий пристрій:
+   <code>Pylontech battery</code></li>
+</ol>
+<h3 id="2-dvcc">Крок 2. Налаштування системи керування DVCC (Обов'язково!)</h3>
+<p>Система DVCC автоматично транслює динамічні ліміти заряду з COM-Box на інвертор MultiPlus-II:
+1. Відкрийте меню: <strong><code>Settings</code> ➔ <code>DVCC</code></strong>.
+2. Встановіть наступні параметри:
+   * <strong>DVCC:</strong> <strong><code>ON</code></strong> (Увімкнено);
+   * <strong>Controlling BMS:</strong> Оберіть вашу виявлену батарею (<strong><code>Pylontech battery</code></strong>);
+   * <strong>Limit managed battery charge voltage:</strong> <strong><code>ON</code></strong> (Увімкнено) ➔ Встановіть значення: <strong><code>52.4 V</code></strong> або <strong><code>52.5 V</code></strong> <em>(це рекомендація Victron для 15S, щоб запобігти помилкам High Voltage)</em>;
+   * <strong>Shared Voltage Sense (SVS):</strong> <strong><code>OFF</code></strong> <em>(Суворо вимкнено! Точну напругу банку транслює COM-Box)</em>;
+   * <strong>Shared Temperature Sense (STS):</strong> <strong><code>OFF</code></strong> <em>(Суворо вимкнено! Температуру повідомляє BMS)</em>.</p>
+<hr/>
+<h2 id="6-victron-multiplus-ii">6. Налаштування інвертора Victron MultiPlus-II</h2>
+<p>Через програму <strong>VictronConnect</strong> (або <strong>VEConfigure 3</strong> через перехідник MK3-USB):</p>
+<ol>
+<li><strong>Вкладка Charger (Зарядний пристрій):</strong></li>
+<li><strong>Battery type:</strong> Оберіть профіль <em>Lithium Iron Phosphate (LiFePO4)</em> або залиште базові значення:</li>
+<li><strong>Absorption voltage:</strong> <strong><code>52.0 В – 52.5 В</code></strong></li>
+<li><strong>Float voltage:</strong> <strong><code>51.0 В</code></strong></li>
+<li><strong>Charge current:</strong> Встановіть максимальний ліміт із розрахунку 50 А на кожен підключений блок (наприклад, для 4 блоків — до 120–150 А).</li>
+<li><strong>Вкладка ESS (Energy Storage System), якщо використовується мережевий режим:</strong></li>
+<li>Увімкніть режим ESS. Завдяки увімкненому DVCC інвертор автоматично підпорядковується всім командам Cerbo GX.</li>
+</ol>
+<hr/>
+<h2 id="7-com-box">7. Логіка роботи та алгоритми безпеки COM-Box</h2>
+<h3 id="71-finishing-taper">7.1. Захист від перезаряду та плавне завершення (Finishing Taper)</h3>
+<ul>
+<li>Коли напруга найвищої комірки в будь-якому блоці досягає <strong>3.450 В</strong>, COM-Box починає плавно знижувати струм заряду (CCL) пропорційно зростанню напруги.</li>
+<li>Якщо комірка досягає <strong>3.600 В</strong> або блок переходить у стан Standby, струм плавно зменшується до 0 А.</li>
+</ul>
+<h3 id="72-float-510">7.2. Автоматичний перехід у режим Float (51.0 В)</h3>
+<ul>
+<li>Як тільки всі акумулятори в банку перейшли в стан повної зарядки (Standby), COM-Box знижує запит напруги <strong>CVL з 52.5 В до 51.0 В</strong>.</li>
+<li>Інвертор MultiPlus-II м'яко переходить у стан зберігання (Float) зі струмом 0.0 А, не створюючи перевантажень та не викликаючи аварій.</li>
+</ul>
+<h3 id="73-2-c">7.3. Температурний захист від заряду на морозі (&lt; +2 °C)</h3>
+<ul>
+<li>Заряджання LiFePO4 акумуляторів при температурі нижче 0 °C руйнує кристалічну решітку літію.</li>
+<li>Якщо будь-який датчик температури акумулятора фіксує менше <strong>+2 °C</strong>, COM-Box негайно виставляє ліміт заряду <strong><code>CCL = 0 А</code></strong> та знімає біт дозволу заряду в CAN-пакеті <code>0x35C</code>.</li>
+</ul>
+<hr/>
+<div class="table-card"><h2 id="8-dip-com-box">8. Таблиця DIP-перемикачів на COM-Box</h2><table>
+<thead>
+<tr>
+<th style="text-align: center;">DIP</th>
+<th>Назва</th>
+<th>Стан OFF (Вниз, стандарт)</th>
+<th>Стан ON (Вгору)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>SW1</strong></td>
+<td><strong>Профіль напруги (CVL)</strong></td>
+<td><strong>100% (52.5 В)</strong> — стандартний режим 15S LiFePO4</td>
+<td><strong>90% (51.8 В)</strong> — ощадливий режим (максимальний життєвий ресурс комірок)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>SW2</strong></td>
+<td><strong>Режим PCS-485</strong></td>
+<td>Дзеркало BMS телеметрії</td>
+<td>Наскрізний міст до інвертора</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>SW3</strong></td>
+<td><strong>Швидкість сканування</strong></td>
+<td><strong>Plug &amp; Play автопошук</strong> (опитування лише активних блоків, цикл 800 мс)</td>
+<td>Примусове сканування всіх 16 адрес (сервісний режим, 6.4 с)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>SW4</strong></td>
+<td><strong>Струм заряду на модуль</strong></td>
+<td><strong>50 А на блок</strong> (номінал виробника Vision)</td>
+<td><strong>15 А на блок</strong> (тихий щадний заряд 0.15C)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>SW5</strong></td>
+<td><strong>Примусове балансування</strong></td>
+<td>Автоматичне балансування</td>
+<td>Примусовий Float Hold (52.5 В, утримання струму для роботи балансирів)</td>
+</tr>
+</tbody>
+</table></div>
+
+<hr/>
+<h2 id="9-faq">9. Діагностика та усунення несправностей (FAQ)</h2>
+<h3 id="1-cerbo-gx-device-list">1. Cerbo GX не бачить батарею (Device List порожній)</h3>
+<ul>
+<li><strong>Перевірте полярність CAN-кабелю:</strong> Переконайтеся, що Pin 8 коробки підключений до Pin 7 Cerbo GX, а Pin 7 — до Pin 8 Cerbo GX.</li>
+<li><strong>Перевірте термінатор 120 Ом:</strong> У сусідньому гнізді порту BMS-Can Cerbo GX обов'язково повинен стояти синій термінатор.</li>
+<li><strong>Перевірте профіль порту:</strong> Переконайтеся, що в налаштуваннях Cerbo GX встановлено <code>CAN-bus BMS (500 kbit/s)</code>.</li>
+<li><strong>Перевірте світлодіод PCS-CAN Connect на коробці:</strong> Він повинен блимати рівно 1 раз на секунду (1 Гц).</li>
+</ul>
+<h3 id="2-bms-485-connect">2. Світлодіод BMS-485 Connect не блимає</h3>
+<ul>
+<li>COM-Box не отримує відповіді від акумуляторів Vision.</li>
+<li>Перевірте правильність розпіновки кабелю RS-485: Pin 6 (COM-Box) ➔ Pin 2 (Vision), Pin 5 (COM-Box) ➔ Pin 1 (Vision), Pin 1 (COM-Box) ➔ Pin 3 або 6 (Vision). Звичайний прямий кабель не працюватиме!</li>
+<li>Переконайтеся, що на головному блоці АКБ важіль <strong>DIP 4</strong> (крайній справа) піднятий <strong>ВГОРУ (ON)</strong>, а важелі 1, 2, 3 опущені <strong>ВНИЗ (OFF)</strong>, що відповідає адресі <code>0x01</code>.</li>
+</ul>
+<h3 id="3-cerbo-gx-high-voltage">3. Cerbo GX видає попередження "High Voltage"</h3>
+<ul>
+<li>Перевірте меню <strong>DVCC</strong>: параметр <strong>Limit managed battery charge voltage</strong> повинен бути увімкнений та встановлений на <strong>52.4 В</strong> або <strong>52.5 В</strong>.</li>
+<li>Перевірте, чи не увімкнений випадково параметр SVS (Shared Voltage Sense) — він має бути <strong>OFF</strong>.</li>
+</ul>
+</body>
+</html>

@@ -35,3 +35,7 @@ desktop.ini
 bms_monitor_*.csv
 bms_log_*.csv
 tools/dumps/bms_monitor_*.csv
+
+# --- Reference manuals & Datasheets (keep repository light, track only USER_MANUAL.pdf) ---
+*.pdf
+!USER_MANUAL.pdf

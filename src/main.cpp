@@ -384,12 +384,14 @@ static volatile uint16_t uart_rx_index = 0;
 
 static float bms_voltage = BATTERY_VOLTAGE_DEFAULT;
 static float bms_current = BATTERY_CURRENT_DEFAULT;
+static inline bool bms_is_discharging(float thresh_a) { return bms_current > thresh_a; }
+static inline bool bms_is_charging(float thresh_a) { return bms_current < -thresh_a; }
 static uint8_t bms_soc = BATTERY_SOC_DEFAULT;
 static float bms_temp = BATTERY_TEMP_DEFAULT;
 static uint8_t bms_soh = BATTERY_SOH_DEFAULT;
-// Packs seen in the last full cycle; kept (not cleared) on comm loss so
-// 0x359 byte 4 stays the fixed system size the inverter expects.
-static uint8_t bms_pack_count = 0;
+// Packs seen in the last full cycle; clamped to minimum 1 on comm loss so
+// 0x359 byte 4 never sends 0 modules to Cerbo GX.
+static uint8_t bms_pack_count = 1;
 
 static float agg_voltage_sum = 0.0f;
 static float agg_current_sum = 0.0f;
@@ -1371,8 +1373,8 @@ static uint16_t calculate_charge_limit(uint8_t pack_count) {
   if (agg_max_cell_mv >= CELL_CHARGE_STOP_MV) {
     charge_cell_ov_inhibit = true;
   } else if (charge_cell_ov_inhibit) {
-    // Release on passive voltage drop below reenable threshold OR proactively on discharge current (I < -2.0 A) with cell < 3550 mV
-    bool discharge_release = (bms_current < -2.0f) && (agg_max_cell_mv < CELL_PHYSICAL_OV_WARN_CONFIRM_MV);
+    // Release on passive voltage drop below reenable threshold OR proactively on discharge current (I > +2.0 A) with cell < 3550 mV
+    bool discharge_release = bms_is_discharging(2.0f) && (agg_max_cell_mv < CELL_PHYSICAL_OV_WARN_CONFIRM_MV);
     if (agg_max_cell_mv < CELL_CHARGE_REENABLE_MV || discharge_release) {
       charge_cell_ov_inhibit = false;
     }
@@ -1732,9 +1734,9 @@ static void bms_aggregate_data(void) {
     bank_all_packs_standby = true;
   } else if (bank_all_packs_standby) {
     // Exit Standby:
-    // 1) Active discharge flow into household loads (I < -1.5 A)
+    // 1) Active discharge flow into household loads (I > +1.5 A)
     // 2) OR confirmed natural cell relaxation below safe re-enable floor
-    bool discharge_exit = (bms_current < -1.5f);
+    bool discharge_exit = bms_is_discharging(1.5f);
     if ((agg_max_cell_mv > 0 && agg_max_cell_mv < CELL_CHARGE_REENABLE_MV) || discharge_exit) {
       bank_all_packs_standby = false;
     }
@@ -2134,6 +2136,7 @@ int main(void) {
       bms_soc = BATTERY_SOC_DEFAULT;
       bms_soh = BATTERY_SOH_DEFAULT;
       bms_temp = BATTERY_TEMP_DEFAULT;
+      bms_pack_count = 1; // safe minimum (never send 0 packs in 0x359 byte 4)
       soc_ema_valid = false; // наступний sweep snap без фільтра
       charge_voltage_limit = CHARGE_VOLTAGE_LIMIT_STATIC;
       charge_current_limit = CHARGE_CURRENT_LIMIT_DEFAULT;

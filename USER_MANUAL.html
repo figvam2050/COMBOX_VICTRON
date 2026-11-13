@@ -594,7 +594,15 @@ hr {
 
 <hr/>
 <h2 id="9-faq">9. Діагностика та усунення несправностей (FAQ)</h2>
-<h3 id="1-cerbo-gx-device-list">1. Cerbo GX не бачить батарею (Device List порожній)</h3>
+<h3 id="1-cerbo-gx-vrm-portal">1. Перевірка знаку струму на Cerbo GX та у VRM Portal</h3>
+<ul>
+<li><strong>Як має відображатися:</strong> У системі Victron (CAN ID <code>0x356</code>) <strong>заряд</strong> позначається зі знаком <strong><code>+</code></strong> (позитивний струм), а <strong>розряд</strong> у навантаження — зі знаком <strong><code>-</code></strong> (негативний струм).</li>
+<li><strong>Швидкий тест після монтажу:</strong></li>
+<li>Створіть навантаження на інвертор (увімкніть споживачі без мережі/сонця): на <strong>GX Touch</strong> та в <strong>VRM Portal</strong> струм і потужність батареї повинні показувати <strong>мінус (<code>-</code>)</strong>.</li>
+<li>Подайте заряд від мережі або сонячних панелей: струм і потужність батареї повинні показувати <strong>плюс (<code>+</code>)</strong>.</li>
+<li><strong>Якщо полярність інвертована:</strong> Перевірте налаштування <code>BMS_CURRENT_CHARGE_IS_POSITIVE</code> у <code>src/main.cpp</code> (усередині прошивки COMBOX розряд має знак <code>&gt; 0</code>, заряд <code>&lt; 0</code>, а при передачі кадру <code>0x356</code> виконується інверсія у формат Victron; на тайм-ауті BMS кількість модулів <code>bms_pack_count</code> безпечно фіксується як мінімум на <code>1</code>).</li>
+</ul>
+<h3 id="2-cerbo-gx-device-list">2. Cerbo GX не бачить батарею (Device List порожній)</h3>
 <ul>
 <li><strong>Перевірте полярність CAN-кабелю:</strong> Переконайтеся, що Pin 8 коробки підключений до Pin 7 Cerbo GX, а Pin 7 — до Pin 8 Cerbo GX.</li>
 <li><strong>Перевірте термінатор 120 Ом:</strong> У сусідньому гнізді порту BMS-Can Cerbo GX обов'язково повинен стояти синій термінатор.</li>

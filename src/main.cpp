@@ -114,13 +114,11 @@ static uint16_t modbus_crc16(const volatile uint8_t *data, uint16_t len) {
 #define CHARGE_VOLTAGE_LIMIT_STATIC 540 // 54.0 V (3.60 V/cell * 15): Vision V-LFP48100 official recommended charging voltage
 #define DISCHARGE_VOLTAGE_LIMIT_X10 420 // 42.0 V (2.80 V/cell * 15): Vision V-LFP48100 official discharge cut-off voltage
 
-// Per-pack charge current limit, selected by DIP4 (SW4, PB15):
-// OFF (default) = 50 A (battery manufacturer maximum 0.5C), ON = 15 A (0.15C gentle current limit mode).
-#define CHARGE_CURRENT_LIMIT_PER_PACK_DIP4_LIMIT_X10 150
-#define CHARGE_CURRENT_LIMIT_PER_PACK_X10 500
-#define DISCHARGE_CURRENT_LIMIT_PER_PACK_X10 1000
+// Per-pack charge and discharge current limits (official Vision V-LFP48100 0.5C standard):
+#define CHARGE_CURRENT_LIMIT_PER_PACK_X10 500  // 50.0 A per pack (0.5C standard charge)
+#define DISCHARGE_CURRENT_LIMIT_PER_PACK_X10 1000 // 100.0 A per pack (1.0C max discharge)
 
-// Max-cell charge taper: nominal per-pack limit (50 A default / 15 A DIP4) to 0 A between 3.450 V and 3.600 V.
+// Max-cell charge taper: nominal per-pack limit (50 A default) to 0 A between 3.450 V and 3.600 V.
 // Re-enabling below 3.550 V prevents charge-limit oscillation at the cutoff.
 #define CELL_TAPER_START_MV 3450
 #define CELL_CHARGE_STOP_MV 3600
@@ -131,12 +129,12 @@ static uint16_t modbus_crc16(const volatile uint8_t *data, uint16_t len) {
 // locked until the highest cell in that pack drops <= 3420 mV.
 #define CELL_OV_RELEASE_BMS_MV 3420
 
-// DIP4 (SW4, weight 8, PB15) selects the per-pack charge current limit:
-// OFF (default) = 50 A, ON = 15 A (0.15C current limit mode).
-#define DIP_CHARGE_CURRENT_LIMIT_30A 0x08
-// DIP3 (SW3, weight 4, PB14):
-// OFF = Smart Plug & Play autosearch (default, fast polling active packs, 800 ms cycle for 2 packs);
-// ON = Forced full 16-address scan (6.4 s legacy/diagnostic mode).
+// Active hardware DIP switches:
+// DIP2 (SW2, weight 2, PB13): PCS-485 port mode (OFF = BMS telemetry mirror for PC, ON = pure bridge)
+// DIP3 (SW3, weight 4, PB14): RS-485 polling speed
+//   OFF = Smart Plug & Play autosearch (default, fast polling active packs, 400-800 ms cycle);
+//   ON = Forced full 16-address scan (6.4 s legacy/diagnostic mode).
+#define DIP2_BRIDGE_MODE 0x02
 #define DIP_FORCE_FULL_SCAN_MASK 0x04
 #define BG_PROBE_INTERVAL_MS 45000UL // background probe every 45 s for auto-discovering new packs
 
@@ -373,9 +371,6 @@ static uint8_t calc_adaptive_soc(uint16_t avg_cell_mv, uint16_t min_cell_mv,
 #define DIP_GPIO_PORT GPIOB
 #define DIP_GPIO_RCU RCU_GPIOB
 #define DIP_GPIO_PINS (GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15)
-#define DIP5_GPIO_PORT GPIOC
-#define DIP5_GPIO_RCU RCU_GPIOC
-#define DIP5_GPIO_PIN GPIO_PIN_6
 
 static volatile uint32_t g_systick_ms = 0;
 static volatile uint8_t uart_rx_buffer[256];
@@ -2056,9 +2051,7 @@ static uint8_t dip_read_code(void) {
 }
 
 static void dip_charge_profile_apply(uint8_t code) {
-  profile_charge_current_per_pack_x10 =
-      (code & DIP_CHARGE_CURRENT_LIMIT_30A) ? CHARGE_CURRENT_LIMIT_PER_PACK_DIP4_LIMIT_X10
-                                            : CHARGE_CURRENT_LIMIT_PER_PACK_X10;
+  profile_charge_current_per_pack_x10 = CHARGE_CURRENT_LIMIT_PER_PACK_X10;
   charge_voltage_limit = CHARGE_VOLTAGE_LIMIT_STATIC;
   dip_applied_code = code;
   pcs_mode_apply(code);       // DIP2: mirror (OFF) vs inverter bridge (ON)

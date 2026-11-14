@@ -626,7 +626,51 @@ hr {
 <p>Проект відкритий для модифікації та побудований з використанням екосистеми <strong>PlatformIO</strong> у VS Code:
 * <strong>Середовище:</strong> VS Code + розширення PlatformIO або утиліта командного рядка <code>pio</code>.
 * <strong>Основний вихідний код:</strong> <a href="src/main.cpp"><code>src/main.cpp</code></a>. Всі ключові параметри (напруги, порогові значення струму, таймінги Modbus, структура CAN-пакетів) чітко структуровані у вигляді <code>#define</code> констант на початку файлу.
-* <strong>Збірка:</strong> Виконується командою <code>pio run</code>. Результат автоматично генерується у <code>.pio/build/genericGD32F305/firmware.bin</code> та копіюється в папку <code>compiled_firmware/</code>.
-* <strong>Прошивка:</strong> Через інтерфейс SWD (ST-Link V2) за допомогою команди <code>pio run -t upload</code> або утиліти STM32CubeProgrammer / OpenOCD (початкова адреса <code>0x08000000</code>).</p>
+* <strong>Збірка:</strong> Виконується командою <code>pio run</code>. Результат автоматично генерується у <code>.pio/build/genericGD32F305/firmware.bin</code> та копіюється в папку <code>compiled_firmware/</code>.</p>
+<h3 id="101-st-link-v2-com-box">10.1. Підключення програматора ST-Link V2 до плати COM-Box</h3>
+<p>Для завантаження скомпільованого бінарника в мікроконтролер GD32F305RCT6 використовується стандартний програматор ST-Link V2 через інтерфейс SWD. Контактна колодка роз'єму <code>J1</code> розташована на платі біля світлодіодів та процесора.</p>
+<p><img alt="Підключення програматора ST-Link V2" src="docs/images/stlink_connection.jpg"/></p>
+<div class="table-card"><h4 id="j1">Таблиця підключення роз'єму J1:</h4><table>
+<thead>
+<tr>
+<th style="text-align: left;">Контакт колодки <code>J1</code></th>
+<th style="text-align: center;">Сигнал</th>
+<th style="text-align: center;">Вивід ST-Link V2</th>
+<th style="text-align: center;">Колір дроту на фото</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Pin 1 (<code>+</code>)</strong></td>
+<td style="text-align: center;"><strong>3.3V (VCC)</strong></td>
+<td style="text-align: center;"><strong>3V3</strong></td>
+<td style="text-align: center;">Білий (лівий крайній)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Pin 2 (<code>-</code>)</strong></td>
+<td style="text-align: center;"><strong>GND (Земля)</strong></td>
+<td style="text-align: center;"><strong>GND</strong></td>
+<td style="text-align: center;">Білий (другий зліва)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Pin 3 (<code>CLK</code>)</strong></td>
+<td style="text-align: center;"><strong>SWCLK</strong></td>
+<td style="text-align: center;"><strong>SCK / SWCLK</strong></td>
+<td style="text-align: center;">Фіолетовий</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Pin 4 (<code>DIO</code>)</strong></td>
+<td style="text-align: center;"><strong>SWDIO</strong></td>
+<td style="text-align: center;"><strong>SDO / SWDIO</strong></td>
+<td style="text-align: center;">Синій</td>
+</tr>
+</tbody>
+</table></div>
+
+<h4 id="_1">Завантаження прошивки:</h4>
+<ul>
+<li>Через PlatformIO: <code>pio run -t upload</code></li>
+<li>Через STM32CubeProgrammer: вибрати файл <code>compiled_firmware/firmware.bin</code>, вказати початкову адресу <code>0x08000000</code> та натиснути кнопку <strong>Start Programming</strong>.</li>
+</ul>
 </body>
 </html>

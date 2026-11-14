@@ -111,9 +111,8 @@ static uint16_t modbus_crc16(const volatile uint8_t *data, uint16_t len) {
 #define CHARGE_CURRENT_LIMIT_DEFAULT 0
 #define DISCHARGE_CURRENT_LIMIT_DEFAULT 0
 
-#define CHARGE_VOLTAGE_LIMIT_STATIC 532 // 53.2 V (3.546 V/cell * 15): Victron/Pylontech 15S absorption/bulk voltage
-#define CHARGE_VOLTAGE_LIMIT_FLOAT 510  // 51.0 V (3.40 V/cell * 15): Victron 15S float voltage
-#define DISCHARGE_VOLTAGE_LIMIT_X10 440 // 44.0 V: Victron MultiPlus recommended low DC shut-down (15S)
+#define CHARGE_VOLTAGE_LIMIT_STATIC 540 // 54.0 V (3.60 V/cell * 15): Vision V-LFP48100 official recommended charging voltage
+#define DISCHARGE_VOLTAGE_LIMIT_X10 420 // 42.0 V (2.80 V/cell * 15): Vision V-LFP48100 official discharge cut-off voltage
 
 // Per-pack charge current limit, selected by DIP4 (SW4, PB15):
 // OFF (default) = 50 A (battery manufacturer maximum 0.5C), ON = 15 A (0.15C gentle current limit mode).
@@ -1742,14 +1741,8 @@ static void bms_aggregate_data(void) {
     }
   }
 
-  // Victron DVCC voltage and float management:
-  // When bank is fully charged and in standby, lower CVL to float (51.0 V) as Victron expects,
-  // preventing Overcharge / High Voltage alarms on MultiPlus-II.
-  if (bank_all_packs_standby) {
-    charge_voltage_limit = CHARGE_VOLTAGE_LIMIT_FLOAT;
-  } else {
-    charge_voltage_limit = CHARGE_VOLTAGE_LIMIT_STATIC;
-  }
+  // Vision V-LFP48100 official passport voltage limits:
+  charge_voltage_limit = CHARGE_VOLTAGE_LIMIT_STATIC;
 
   uint16_t target_ccl = bank_all_packs_standby ? 0 : calculate_charge_limit(charge_packs);
   discharge_current_limit = calculate_discharge_limit(discharge_packs);
